@@ -1,5 +1,4 @@
-use core::panic ;
-
+use anyhow::{Context, Result};
 use clap::Parser;
 
 #[derive(Parser)]
@@ -8,20 +7,28 @@ struct Cli {
     path: std::path::PathBuf,
 }
 
-fn main() {
+fn main() -> Result<()> {
     let args = Cli::parse();
 
-    let result = std::fs::read_to_string(&args.path);
-    let content = match result {
-        Ok(content) => content,
-        Err(err) => {
-            panic!("Can't deal with {}, just exit here", err)
-        }
-    };
+    let content = std::fs::read_to_string(&args.path)
+        .with_context(|| format!("could not read file `{}`", args.path.display()))?;
 
+    find_matches(&content, &args.pattern, &mut std::io::stdout());
+
+    Ok(())
+}
+
+fn find_matches(content: &str, pattern: &str, mut writer: impl std::io::Write) {
     for line in content.lines() {
-        if line.contains(&args.pattern) {
-            println!("{}", line)
+        if line.contains(pattern) {
+            writeln!(writer, "{}", line).unwrap();
         }
     }
+}
+
+#[test]
+fn check_answer_validity() {
+    let mut result = Vec::new();
+    find_matches("lorem ipsum\ndolor sit amet", "lorem", &mut result);
+    assert_eq!(result, b"lorem ipsum\n");
 }

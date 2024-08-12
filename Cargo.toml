@@ -2,9 +2,19 @@
 name = "grrs"
 version = "0.1.0"
 edition = "2021"
+authors = ["Your Name <your@email.com>"]
+license = "MIT"
+description = "A tool to search inside files"
+readme = "README.md"
+repository = "https://github.com/jeisaraja/grrs"
+keywords = ["cli", "search", "demo"]
+categories = ["command-line-utilities"]
 
 [dependencies]
 anyhow = "1.0.86"
-assert_cmd = "2.0.16"
 clap = { version = "4.5.15", features = ["derive"] }
+
+[dev-dependencies]
+assert_cmd = "2.0.16"
+assert_fs = "1.1.2"
 predicates = "3.1.2"
